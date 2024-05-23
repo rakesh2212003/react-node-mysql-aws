@@ -1,22 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { AnimatePresence } from 'framer-motion'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+// import { AnimatePresence } from 'framer-motion'
+// import { Provider } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
 
 import './index.css';
 import App from './App';
-import store from './store'
+// import store from './store'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
     <React.StrictMode>
-        <AnimatePresence>
-            <Provider store={ store }>
+        {/* <AnimatePresence> */}
+            {/* <Provider store={ store }> */}
                 <Router>
                     <App />
                 </Router>
-            </Provider>
-        </AnimatePresence>
+            {/* </Provider> */}
+        {/* </AnimatePresence> */}
     </React.StrictMode>
 );
