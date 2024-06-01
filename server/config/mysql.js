@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise'
 
-const getConnection = async() => {
+export const getConnection = async() => {
     try {
         const connection = await mysql.createConnection({
             host: process.env.DB_HOST,
@@ -13,9 +13,6 @@ const getConnection = async() => {
         })
         return connection;
     } catch (error) {
-        console.error('Error:', error.message);
-        // throw error;
+        console.error('error:', error.message);
     }
 }
-
-export { getConnection };
