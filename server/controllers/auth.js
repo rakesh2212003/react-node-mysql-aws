@@ -3,75 +3,73 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 import { getConnection } from '../config/mysql.js'
-import user from '../models/user.js'
-import { createUser, findEmail } from '../query/user.js'
+import userTable from '../models/user.js'
+import { createUser, findEmail, getUser } from '../query/user.js'
 
 export const signup = async (req, res) => {
+    const { firstname, lastname, email, password } = req.body;
     try {
         const id = uuidv4();
-        const { firstname,lastname,email,password,image } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const data = [id,firstname,lastname,email,hashedPassword,image];
+        const name = firstname + ' ' + lastname;
+        const hashPassword = await bcrypt.hash(password, 10);
 
         const connection = await getConnection();
-        connection.execute(user);
+        await connection.execute(userTable);
         const [rows] = await connection.execute(findEmail, [email]);
         if (rows.length !== 0) {
-            return res.status(401).json({ success: false, message: 'User email already exist' });
+            return res.status(401).json({ success: false, message: 'User already exist' });
         }
-        connection.execute(createUser, data);
-        connection.end();
+        await connection.execute(createUser, [id, name, email, hashPassword]);
+        const [user] = await connection.execute(getUser, [id]);
+        await connection.end();
 
         const token = jwt.sign({ id: id }, process.env.JWT_SECRET, { expiresIn: '1hr' });
 
-        return res.status(201).json({
+        return res.status(201).json({ 
             success: true,
-            message: 'Signup Successful',
+            message: 'User created',
             data: {
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                image: image,
                 token: token,
-            },
+                name: user[0].name,
+                email: user[0].email,
+                avatar: user[0].avatar,
+                created_on: user[0].created_on,
+                updated_on: user[0].updated_on,
+            }
         });
-    }
-    catch (error) {
-        return res.status(500).json({ success: false, message: 'Signup failed' });
+    } catch (error) {
+        return res.status(404).json({ success: false, message: error.message });
     }
 }
 
-// export const login = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
+export const login = async (req, res) => {
+    const  { email, password } = req.body;
+    try{
+        const connection = await getConnection();
+        const [user] = await connection.execute(findEmail, [email]);
+        if(user.length === 0){
+            return res.status(400).json({ success: false, message: 'Invalid email or password' });
+        }
+        await connection.end();
 
-//         const connection = await getConnection();
-//         const [rows] = await connection.execute(findEmail, [email]);
-//         connection.end();
-
-//         if (rows.length === 0) {
-//             return res.status(401).json({ error: 'Invalid email or password' });
-//         }
-
-//         const user = rows[0];
-//         const passwordMatch = await bcrypt.compare(password, user.password);
-
-//         if (!passwordMatch) {
-//             return res.status(401).json({ error: 'Invalid email or password' });
-//         }
-
-//         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1hr' });
-
-//         res.status(200).json({
-//             message: 'Login successful',
-//             token: token,
-//             data: {
-//                 firstname: user.firstname,
-//                 lastname: user.lastname,
-//                 email: user.email,
-//             }
-//         });
-//     } catch (error) {
-//         res.status(500).json({ error: 'Login failed' });
-//     }
-// }
+        const isMatched = await bcrypt.compare(password, user[0].password);
+        if(!isMatched){
+            return res.status(400).json({ success: false, message: 'Invalid email or password '});
+        }
+        const token = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET, { expiresIn: '1hr' });
+        return res.status(200).json({
+            success: true,
+            message: 'User login successful',
+            data: {
+                token: token,
+                name: user[0].name,
+                email: user[0].email,
+                avatar: user[0].avatar,
+                created_on: user[0].created_on,
+                updated_on: user[0].updated_on,
+            }
+        })
+    }catch(error){
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}

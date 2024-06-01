@@ -1,15 +1,15 @@
-const user = `
-CREATE TABLE IF NOT EXISTS user(
-    id char(36) PRIMARY KEY,
-    firstname VARCHAR(50) NOT NULL,
-    lastname VARCHAR(50) NOT NULL,
+const userTable = `
+CREATE TABLE IF NOT EXISTS user (
+    id CHAR(36) PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password CHAR(60) NOT NULL,
-    avatar VARCHAR(1000),
+    avatar VARCHAR(100) DEFAULT '00000000_0000.png',
     created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted TINYINT(1) DEFAULT 0
+    deleted TINYINT(1) DEFAULT 0,
+    version INTEGER DEFAULT 1
 )
 `
 
-export default user;
+export default userTable;

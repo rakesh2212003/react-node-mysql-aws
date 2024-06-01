@@ -1,6 +1,6 @@
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3Client } from "../config/s3Client.js";
+import { GetObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import { s3Client } from "../config/s3Client.js"
 
 export const getObject = async (key) => {
     const command = new GetObjectCommand({

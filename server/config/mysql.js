@@ -13,8 +13,8 @@ const getConnection = async() => {
         })
         return connection;
     } catch (error) {
-        console.error('Error establishing database connection:', error);
-        throw error;
+        console.error('Error:', error.message);
+        // throw error;
     }
 }
 
