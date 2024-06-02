@@ -1,8 +1,10 @@
-const userTable = `
-CREATE TABLE IF NOT EXISTS user (
-    id CHAR(36) PRIMARY KEY NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+const users = `
+CREATE TABLE IF NOT EXISTS users (
+    id CHAR(36) PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100) NOT NULL UNIQUE,
     password CHAR(60) NOT NULL,
     avatar VARCHAR(100) DEFAULT '00000000_0000.png',
     created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -12,4 +14,4 @@ CREATE TABLE IF NOT EXISTS user (
 )
 `
 
-export default userTable;
+export default users;
