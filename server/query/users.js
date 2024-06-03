@@ -21,3 +21,8 @@ UPDATE users SET first_name=?,last_name=?,email=? WHERE id=?
 export const deleteUserFromId = `
 UPDATE users SET deleted=1 WHERE deleted=0 AND id=?
 `
+
+//admin
+export const getAllusers = `
+SELECT * FROM users
+`

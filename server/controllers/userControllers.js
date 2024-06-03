@@ -1,5 +1,5 @@
 import { getConnection } from "../config/mysql.js";
-import { deleteUserFromId, getUserFromEmail, getUserFromId, updateUserFromId } from "../query/user.js";
+import { deleteUserFromId, getUserFromEmail, getUserFromId, updateUserFromId } from "../query/users.js";
 import { isValidEmail } from '../rules/users.js'
 
 export const getUser = async (req, res) => {

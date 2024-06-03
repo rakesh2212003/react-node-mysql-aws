@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 import { getConnection } from '../config/mysql.js'
-import { getUserFromEmail, createUser, getUserFromId, getUserFromUsername } from '../query/user.js'
+import { getUserFromEmail, createUser, getUserFromId, getUserFromUsername } from '../query/users.js'
 import { isValidUsername, isValidEmail, isValidPassword } from '../rules/users.js'
 
 export const signup = async (req, res) => {

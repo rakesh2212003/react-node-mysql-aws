@@ -7,7 +7,7 @@ const AllRoutes = () => {
     return (
         <Routes>
             <Route path='/auth' element={<Auth />} />
-        </Routes>   
+        </Routes>
     )
 }
 
