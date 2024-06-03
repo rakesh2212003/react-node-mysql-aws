@@ -1,4 +1,4 @@
-import { v4 as uuidv4, validate } from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -12,17 +12,17 @@ export const signup = async (req, res) => {
     try {
         const { username, first_name, last_name, email, password } = req.body;
 
-        if(!username || !email || !password){
+        if (!username || !email || !password) {
             return res.status(400).json({ success: false, message: 'username, email & password is required' });
         }
         if (!isValidUsername(username)) {
             return res.status(400).json({ success: false, message: 'Username can only contain letters, numbers, and underscores' });
         }
-        if(!isValidEmail(email)){
+        if (!isValidEmail(email)) {
             return res.status(400).json({ success: false, message: 'Provide a proper email address' });
         }
-        if(!isValidPassword(password)){
-            return res.status(400).json({ success: false, message: 'Password must contain atleast 8 characters atleast one uppercase letter, one lowercase letter, one digit, and one special character' });
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ success: false, message: 'Password must contain atleast 8 characters including one uppercase letter, one lowercase letter, one digit, and one special character' });
         }
 
         connection = await getConnection();
@@ -36,7 +36,7 @@ export const signup = async (req, res) => {
         if (existingUsers.length !== 0) {
             return res.status(400).json({ success: false, message: 'User with this email already exists' });
         }
-        
+
         const id = uuidv4();
         const hashPassword = await bcrypt.hash(password, 10);
 
@@ -66,7 +66,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
     let connection, userId;
-    let rows;
+    let existingUsers;
 
     try {
         const { usernameOrEmail, password } = req.body;
@@ -80,15 +80,18 @@ export const login = async (req, res) => {
         const isEmail = usernameOrEmail.includes('@');
 
         if (isEmail) {
-            [rows] = await connection.execute(getUserFromEmail, [usernameOrEmail]);
+            if (!isValidEmail(usernameOrEmail)) {
+                return res.status(400).json({ success: false, message: 'Provide a proper email address' });
+            }
+            [existingUsers] = await connection.execute(getUserFromEmail, [usernameOrEmail]);
         } else {
-            [rows] = await connection.execute(getUserFromUsername, [usernameOrEmail]);
+            [existingUsers] = await connection.execute(getUserFromUsername, [usernameOrEmail]);
         }
 
-        if (rows.length === 0) {
+        if (existingUsers.length === 0) {
             return res.status(400).json({ success: false, message: 'Invalid username or email or password' });
         }
-        userId = rows[0].id;
+        userId = existingUsers[0].id;
 
         const [users] = await connection.execute(getUserFromId, [userId]);
         const user = users[0];
@@ -116,4 +119,4 @@ export const login = async (req, res) => {
             await connection.end();
         }
     }
-};
+}

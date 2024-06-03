@@ -1,19 +1,10 @@
 import express from 'express'
-
-import { signup, login } from '../controllers/auth.js'
-import { deleteUser, getAllusers } from '../controllers/user.js'
-import { verifyToken, verifyAdminToken } from '../middlewares/authMiddleware.js';
+import { getUser, updateUser, deleteUser } from '../controllers/userControllers.js'
 
 const router = express.Router();
 
-//public routes
-router.post('/signup', signup);
-router.post('/login', login);
-
-//private routes
-router.patch('/delete', verifyToken, deleteUser);
-
-//admin routes
-router.get('/getAll', verifyAdminToken, getAllusers);
+router.get('/get/:id', getUser);
+router.put('/update/:id', updateUser);
+router.patch('/delete/:id', deleteUser);
 
 export default router;

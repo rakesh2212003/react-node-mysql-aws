@@ -14,10 +14,10 @@ export const getUserFromUsername = `
 SELECT id FROM users WHERE deleted=0 AND username=?
 `
 
-export const getAllUser = `
-SELECT * FROM users WHERE deleted=0;
+export const updateUserFromId = `
+UPDATE users SET first_name=?,last_name=?,email=? WHERE id=?
 `
 
 export const deleteUserFromId = `
-UPDATE users SET deleted=1 WHERE id=?
+UPDATE users SET deleted=1 WHERE deleted=0 AND id=?
 `
