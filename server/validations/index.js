@@ -1,3 +1,8 @@
+export const isValidString = (str) => {
+    const stringRegex = /\S/;
+    return stringRegex.test(str);
+}
+
 export const isValidUsername = (username) => {
     const usernameRegex = /^[a-zA-Z0-9_]+$/;
     return usernameRegex.test(username);

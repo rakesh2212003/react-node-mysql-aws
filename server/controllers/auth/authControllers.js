@@ -2,9 +2,9 @@ import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-import { getConnection } from '../config/mysql.js'
-import { getUserFromEmail, createUser, getUserFromId, getUserFromUsername } from '../query/users.js'
-import { isValidUsername, isValidEmail, isValidPassword } from '../rules/users.js'
+import { getConnection } from '../../config/mysql.js'
+import { getIdFromEmail, createUser, getUserFromId, getUserFromUsername } from '../../queries/users.js'
+import { isValidString, isValidUsername, isValidEmail, isValidPassword } from '../../validations'
 
 export const signup = async (req, res) => {
     let connection, existingUsers;
@@ -12,8 +12,11 @@ export const signup = async (req, res) => {
     try {
         const { username, first_name, last_name, email, password } = req.body;
 
-        if (!username || !email || !password) {
-            return res.status(400).json({ success: false, message: 'username, email & password is required' });
+        if (!first_name || !username || !email || !password) {
+            return res.status(400).json({ success: false, message: 'firstname, username, email & password is required' });
+        }
+        if(!isValidString(first_name) || !isValidString(last_name)){
+            return res.status(400).json({ success: false, message: 'Name will not contain white spaces' });
         }
         if (!isValidUsername(username)) {
             return res.status(400).json({ success: false, message: 'Username can only contain letters, numbers, and underscores' });
@@ -32,7 +35,7 @@ export const signup = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Username not available' });
         }
 
-        [existingUsers] = await connection.execute(getUserFromEmail, [email]);
+        [existingUsers] = await connection.execute(getIdFromEmail, [email]);
         if (existingUsers.length !== 0) {
             return res.status(400).json({ success: false, message: 'User with this email already exists' });
         }
@@ -83,7 +86,7 @@ export const login = async (req, res) => {
             if (!isValidEmail(usernameOrEmail)) {
                 return res.status(400).json({ success: false, message: 'Provide a proper email address' });
             }
-            [existingUsers] = await connection.execute(getUserFromEmail, [usernameOrEmail]);
+            [existingUsers] = await connection.execute(getIdFromEmail, [usernameOrEmail]);
         } else {
             [existingUsers] = await connection.execute(getUserFromUsername, [usernameOrEmail]);
         }

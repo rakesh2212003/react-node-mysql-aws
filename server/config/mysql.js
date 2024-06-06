@@ -13,6 +13,6 @@ export const getConnection = async() => {
         })
         return connection;
     } catch (error) {
-        console.error('error:', error.message);
+        console.error('Database Error:', error.message);
     }
 }

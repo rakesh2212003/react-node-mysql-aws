@@ -2,7 +2,7 @@ export const createUser = `
 INSERT INTO users (id,username,first_name,last_name,email,password) VALUES(?,?,?,?,?,?)
 `
 
-export const getUserFromEmail = `
+export const getIdFromEmail = `
 SELECT id FROM users WHERE deleted=0 AND email=?
 `
 
